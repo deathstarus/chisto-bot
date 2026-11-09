@@ -1,0 +1,25 @@
+# Служба systemd для бота «Чисто» — бот работает 24/7 и сам
+# перезапускается после сбоя или перезагрузки сервера.
+# Установка описана в README.md, раздел «Запуск на VPS».
+
+[Unit]
+Description=Telegram-бот клининговой компании «Чисто»
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Пользователь, от имени которого работает бот
+User=chisto
+# Папка с ботом
+WorkingDirectory=/opt/chisto-bot
+# Python из виртуального окружения + файл бота
+ExecStart=/opt/chisto-bot/venv/bin/python bot.py
+# Если бот упал — перезапустить через 5 секунд
+Restart=always
+RestartSec=5
+# Логи сразу попадают в journalctl, без задержки
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
